@@ -1,10 +1,42 @@
-# Ignorar todos los archivos y carpetas
-*
+# Archivos de configuración de PyCharm (IDEA)
+.idea/
+*.iml
+
+# Entorno virtual de Python
+.venv/
+venv/
+ENV/
+env/
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de configuración del sistema
+*.DS_Store
+*.log
+
+# Archivos de compilación
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Archivos de instalación
+*.wheel
+
+# Archivos de prueba
+.coverage
+*.cover
+*.test
+
+# Archivos estáticos (si no quieres incluir archivos estáticos pre-generados)
+static/
 
 # Exceptuar los siguientes archivos globales
 !.gitignore
 !README.md
-!requirements.txt
 
 # Incluir archivos fuente de Python, Java y Web
 !*.py
