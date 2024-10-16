@@ -4,13 +4,18 @@ import pyautogui
 import pytesseract
 from PIL import ImageGrab
 
-
-# Asegúrate de que pytesseract esté configurado correctamente con la ruta de Tesseract-OCR
-# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe' # Descomenta y configura la ruta si es necesario
+# Configuración de la ruta de Tesseract (si es necesario)
+# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 def ejecutar_dosbox():
-    # Ejecuta el archivo .bat que inicia DOSBox con Wine
-    subprocess.Popen(["wine", "./Database-MSDOS/database.bat"])
+    # Ruta completa a DOSBox
+    dosbox_path = r"C:\Users\javi\PycharmProjects\Legados_Practicas_718197_815877\pr3\DataBaseWrapperPy_Grupo09\Database-MSDOS\DOSBox-0.74\DOSBox.exe"
+
+    # Ruta completa al archivo .bat
+    bat_file_path = r"C:\Users\javi\PycharmProjects\Legados_Practicas_718197_815877\pr3\DataBaseWrapperPy_Grupo09\Database-MSDOS\database.bat"
+
+    # Ejecuta DOSBox con el archivo .bat directamente
+    subprocess.Popen([dosbox_path, bat_file_path, '-noconsole'])
     time.sleep(5)  # Espera que DOSBox se inicialice completamente
 
 def pulsar_tecla(tecla):
