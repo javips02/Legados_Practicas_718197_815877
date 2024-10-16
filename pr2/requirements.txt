@@ -1,0 +1,3 @@
+python-time
+PyQt5
+py3270
