@@ -33,20 +33,3 @@ build/
 
 # Archivos estáticos (si no quieres incluir archivos estáticos pre-generados)
 static/
-
-# Exceptuar los siguientes archivos globales
-!.gitignore
-!README.md
-
-# Incluir archivos fuente de Python, Java y Web
-!*.py
-!*.java
-!*.html
-!*.css
-!*.js
-
-# Incluir las carpetas pr2 y pr3 de forma recursiva
-!pr2/
-!pr2/**
-!pr3/
-!pr3/**
