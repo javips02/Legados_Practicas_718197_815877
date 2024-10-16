@@ -1,5 +1,5 @@
 # Archivos de configuración de PyCharm (IDEA)
-.idea/
+*.idea/
 *.iml
 
 # Entorno virtual de Python
