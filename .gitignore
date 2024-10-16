@@ -1,0 +1,20 @@
+# Ignorar todos los archivos y carpetas
+*
+
+# Exceptuar los siguientes archivos globales
+!.gitignore
+!README.md
+!requirements.txt
+
+# Incluir archivos fuente de Python, Java y Web
+!*.py
+!*.java
+!*.html
+!*.css
+!*.js
+
+# Incluir las carpetas pr2 y pr3 de forma recursiva
+!pr2/
+!pr2/**
+!pr3/
+!pr3/**
