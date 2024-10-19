@@ -1,2 +1,3 @@
-pyautogui
-pytesseract
+pyautogui~=0.9.54
+pytesseract~=0.3.13
+pillow~=11.0.0

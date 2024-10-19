@@ -9,14 +9,14 @@ from PIL import ImageGrab
 
 def ejecutar_dosbox():
     # Ruta completa a DOSBox
-    dosbox_path = r"C:\Users\javi\PycharmProjects\Legados_Practicas_718197_815877\pr3\DataBaseWrapperPy_Grupo09\Database-MSDOS\DOSBox-0.74\DOSBox.exe"
-
+    dosbox_path = r".\Database-MSDOS\DOSBox-0.74\DOSBox.exe"
     # Ruta completa al archivo .bat
-    bat_file_path = r"C:\Users\javi\PycharmProjects\Legados_Practicas_718197_815877\pr3\DataBaseWrapperPy_Grupo09\Database-MSDOS\database.bat"
+    db_file_path = r".\Database-MSDOS\Database\gwbasic.bat"
 
-    # Ejecuta DOSBox con el archivo .bat directamente
-    subprocess.Popen([dosbox_path, bat_file_path, '-noconsole'])
+    # Ejecuta DOSBox con el archivo .bat y guarda el proceso
+    process = subprocess.Popen([dosbox_path, db_file_path, '-fullscreen', '-noconsole'])
     time.sleep(5)  # Espera que DOSBox se inicialice completamente
+    return process  # Devuelve el proceso para poder terminarlo más tarde
 
 def pulsar_tecla(tecla):
     # Usa PyAutoGUI para pulsar la tecla
@@ -36,22 +36,29 @@ def extraer_texto(imagen):
 def main():
     # Paso 1: Ejecutar DOSBox
     print("Ejecutando DOSBox...")
-    ejecutar_dosbox()
+    dosbox_process = ejecutar_dosbox()
 
-    # Paso 2: Pulsar la tecla 4 (info BD)
-    print("Pulsando la tecla 4 para obtener información de la base de datos...")
-    pulsar_tecla('4')
+    try:
+        # Paso 2: Pulsar la tecla 4 (info BD)
+        print("Pulsando la tecla 4 para obtener información de la base de datos...")
+        pulsar_tecla('4')
 
-    time.sleep(2)  # Espera un momento para que aparezca la información en pantalla
+        time.sleep(2)  # Espera un momento para que aparezca la información en pantalla
 
-    # Paso 3: Capturar la salida
-    print("Capturando salida...")
-    imagen = capturar_salida()
+        # Paso 3: Capturar la salida
+        print("Capturando salida...")
+        imagen = capturar_salida()
 
-    # Paso 4: Extraer texto de la imagen
-    texto = extraer_texto(imagen)
-    print("Texto extraído:")
-    print(texto)
+        # Paso 4: Extraer texto de la imagen
+        print("Extrayendo texto...")
+        texto = extraer_texto(imagen)
+        print("Texto extraído:")
+        print(texto)
+
+    finally:
+        # Paso 5: Matar el proceso de DOSBox
+        print("Cerrando DOSBox...")
+        dosbox_process.terminate()
 
 if __name__ == "__main__":
     main()
