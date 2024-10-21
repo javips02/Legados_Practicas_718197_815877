@@ -29,7 +29,7 @@ def ejecutar_dosbox():
 
     # Ejecuta DOSBox con el archivo .bat y guarda el proceso
     process = subprocess.Popen([dosbox_path, db_file_path, '-fullscreen', '-noconsole'])
-    time.sleep(3)  # Espera que DOSBox se inicialice completamente
+    time.sleep(8)  # Espera que DOSBox se inicialice completamente
     return process  # Devuelve el proceso para poder terminarlo más tarde
 
 def pulsar_tecla(tecla):
