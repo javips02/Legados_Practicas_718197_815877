@@ -101,6 +101,7 @@ def main():
         # Paso 3: Capturar la salida
         print("Capturando salida...")
         imagen = capturar_salida()
+        pulsar_tecla('enter')
 
         # Paso 4: Extraer texto de la imagen
         print("Extrayendo texto...")
@@ -114,6 +115,12 @@ def main():
     finally:
         # Paso 5: Matar el proceso de DOSBox
         print("Cerrando DOSBox...")
+        pulsar_tecla('8')
+        time.sleep(0.5)
+        pulsar_tecla('S')
+        time.sleep(0.5)
+        pulsar_tecla('enter')
+        time.sleep(0.5)
         dosbox_process.terminate()
 
 if __name__ == "__main__":
