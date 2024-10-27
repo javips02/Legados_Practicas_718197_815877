@@ -86,6 +86,32 @@ def corregir_campo_orden(campo_ocr, opciones):
         return campo_correccion[0]
     return campo_ocr
 
+def extraer_informacion_flexible_tarea2(texto_extraido, nombreProg):
+
+    # Buscar el número de registros con flexibilidad (de momento he puesto confusion entre N y M, y para I y L
+    datos_programa_match = re.search(fr'(\d+)\s+-\s+{nombreProg}\s+-\s+(\w+)\s+CINTA:(\d+)', texto_extraido)
+    error_busqueda_match = re.search(r'([N|M]O HAY [N|M]I[N|M]G.[N|M] PROGRA[N|M]A CO[N|M] ESE [N|M]O[N|M]BRE)', texto_extraido)
+    if error_busqueda_match:
+        return "Error: no hay ningun programa con el nombre "
+    elif datos_programa_match:
+        pulsar_tecla('S') #Confirmar registro correcto
+        pulsar_tecla('enter')
+        time.sleep(0.5)
+        pulsar_tecla('N') # Confirmar no alterar datos del registro
+        pulsar_tecla('enter')
+        time.sleep(0.5)
+        pulsar_tecla('N') # Confirmar no quieor buscar mas
+        pulsar_tecla('enter')
+        numero_registro = datos_programa_match.group(1)
+        categoria = datos_programa_match.group(2)
+        numero_cinta = datos_programa_match.group(3)
+        print("Número de registro:", numero_registro)
+        print("Categoría:", categoria)
+        print("Número de cinta:", numero_cinta)
+        return  "Número de registro:"+numero_registro+"Categoría:"+categoria+"Número de cinta:"+numero_cinta
+    else:
+        return "Error desconocido o de OCR"
+
 def main_p1():
     # Paso 1: Ejecutar DOSBox
     print("Ejecutando DOSBox...")
@@ -122,10 +148,49 @@ def main_p1():
         time.sleep(0.5)
         dosbox_process.terminate()
 
-def main_p2():
-    print("hola mundo")
+def main_p2(nombreprog="MUGSY"):
+    # Paso 1: Ejecutar DOSBox
+    print("Ejecutando DOSBox...")
+    dosbox_process = ejecutar_dosbox()
+
+    try:
+        # Paso 2: Pulsar la tecla 4 (info BD)
+        print("Pulsando la tecla 7 para obtener información de un registor concreto en la base de datos...")
+        pulsar_tecla('7')
+        time.sleep(1)  # Espera un momento para que aparezca la información en pantalla
+        pulsar_tecla('N') # no sabemos el num registro que queremos (opciones gui)
+        pulsar_tecla('enter')
+        # Introducir el nombre del programa a buscar
+        for letra in nombreprog:
+            pulsar_tecla(letra)
+        pulsar_tecla('enter')
+        time.sleep(3)
+
+        # Capturar la salida
+        print("Capturando salida...")
+        imagen = capturar_salida()
+
+        # Extraer texto de la imagen
+        print("Extrayendo texto...")
+        texto = extraer_texto(imagen)
+        print("Texto extraído:")
+        print(texto)
+
+        print("Datos filtrados:")
+        info = extraer_informacion_flexible_tarea2(texto,nombreprog)
+
+    finally:
+        # Paso 5: Matar el proceso de DOSBox
+        print("Cerrando DOSBox...")
+        pulsar_tecla('8')
+        time.sleep(0.5)
+        pulsar_tecla('S')
+        time.sleep(0.5)
+        pulsar_tecla('enter')
+        time.sleep(0.5)
+        dosbox_process.terminate()
 
 
 if __name__ == "__main__":
-    main_p1() # descomentar para ejecutar funcion 1
+    #main_p1() # descomentar para ejecutar funcion 1
     main_p2() # descomanetar para ejecutar funcion 2
