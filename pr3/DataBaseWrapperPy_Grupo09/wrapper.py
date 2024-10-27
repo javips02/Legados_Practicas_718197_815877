@@ -36,11 +36,11 @@ def pulsar_tecla(tecla):
     # Usa PyAutoGUI para pulsar la tecla
     pyautogui.press(tecla)
 
-def capturar_salida():
-    # Captura la pantalla y la guarda en un archivo temporal
+def capturar_salida(ruta="captura.png"):
+    # Captura la pantalla y la guarda en la ruta especificada
     image = ImageGrab.grab()  # Captura la pantalla completa
-    image.save("captura.png")  # Guarda la imagen capturada
-    return "captura.png"
+    image.save(ruta)          # Guarda la imagen en la ruta dada
+    return ruta
 
 def extraer_texto(imagen):
     # Configure Tesseract path for PyTesseract
@@ -86,7 +86,7 @@ def corregir_campo_orden(campo_ocr, opciones):
         return campo_correccion[0]
     return campo_ocr
 
-def main():
+def main_p1():
     # Paso 1: Ejecutar DOSBox
     print("Ejecutando DOSBox...")
     dosbox_process = ejecutar_dosbox()
@@ -95,7 +95,6 @@ def main():
         # Paso 2: Pulsar la tecla 4 (info BD)
         print("Pulsando la tecla 4 para obtener información de la base de datos...")
         pulsar_tecla('4')
-
         time.sleep(2)  # Espera un momento para que aparezca la información en pantalla
 
         # Paso 3: Capturar la salida
@@ -123,5 +122,10 @@ def main():
         time.sleep(0.5)
         dosbox_process.terminate()
 
+def main_p2():
+    print("hola mundo")
+
+
 if __name__ == "__main__":
-    main()
+    main_p1() # descomentar para ejecutar funcion 1
+    main_p2() # descomanetar para ejecutar funcion 2
