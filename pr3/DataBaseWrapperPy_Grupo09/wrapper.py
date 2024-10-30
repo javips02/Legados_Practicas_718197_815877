@@ -96,6 +96,7 @@ def extraer_informacion_flexible_tarea1(texto_extraido):
     # Imprimir la información filtrada
     print(f"Numero de registros en la base de datos: {numero_registros}")
     print(f"Ordenacion segun el campo: {campo_orden}")
+    return numero_registros,campo_orden
 
 # Usa diccionario para encontrar la palabra mas cercana que tenga sentido para el campo de orden
 def corregir_campo_orden(campo_ocr, opciones):
@@ -114,8 +115,6 @@ def extraer_informacion_flexible_tarea2(texto_extraido, nombreProg):
     # Buscar el número de registros con flexibilidad (de momento he puesto confusion entre N y M, y para I y L
 
     pattern = r'\b(\d+)\s+\S*\s+(UTILIDAD|ARCADE|CONVERSACIO[N|M]AL|VIDEOAVENTURA|SIMULADOR|JUEGO DE MESA|S\.\s?[DEPORTIVO|DEPORTI[L|I]VO]|ESTRATEGIA)\b.*CINT[A|E][E|:]\W?([A-Z]|\d+)'
-
-
 
     datos_programa_match = re.search(pattern, texto_extraido)
 
@@ -162,7 +161,7 @@ def main_p1():
         print(texto)
 
         print("Datos filtrados:")
-        extraer_informacion_flexible_tarea1(texto)
+        numRegistros, campoOrden =extraer_informacion_flexible_tarea1(texto)
 
     finally:
         # Paso 5: Matar el proceso de DOSBox
@@ -174,6 +173,7 @@ def main_p1():
         pulsar_tecla('enter')
         time.sleep(0.5)
         dosbox_process.terminate()
+        return numRegistros, campoOrden
 
 def main_p2(nombreprog="MUGSY"):
     # Paso 1: Ejecutar DOSBox
@@ -219,5 +219,6 @@ def main_p2(nombreprog="MUGSY"):
 if __name__ == "__main__":
     #main_p1() # descomentar para ejecutar funcion 1
     #main_p2() # descomanetar para ejecutar funcion 2
-    main_p2("PAINTBOX")
-    main_p2("NONEXISTENT")
+    #main_p2("PAINTBOX")
+    #main_p2("NONEXISTENT")
+    print("hola")

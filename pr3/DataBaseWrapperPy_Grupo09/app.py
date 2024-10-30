@@ -1,62 +1,29 @@
-import subprocess
 import time
-import pyautogui
-import pytesseract
-from PIL import ImageGrab
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template, request
+import wrapper  # Asume que `wrapper` contiene las funciones necesarias
 
 app = Flask(__name__)
 
-
-# Asegúrate de que pytesseract esté configurado correctamente con la ruta de Tesseract-OCR
-# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe' # Descomenta y configura la ruta si es necesario
-
-def ejecutar_dosbox():
-    # Ejecuta el archivo .bat que inicia DOSBox
-    subprocess.Popen(["./Database-MSDOS/database.bat"])
-    time.sleep(5)  # Espera que DOSBox se inicialice completamente
-
-
-def pulsar_tecla(tecla):
-    # Usa PyAutoGUI para pulsar la tecla
-    pyautogui.press(tecla)
-
-
-def capturar_salida():
-    # Captura la pantalla y la guarda en un archivo temporal
-    image = ImageGrab.grab()  # Captura la pantalla completa
-    image.save("captura.png")  # Guarda la imagen capturada
-    return "captura.png"
-
-
-def extraer_texto(imagen):
-    # Usa pytesseract para extraer texto de la imagen
-    texto = pytesseract.image_to_string(imagen)
-    return texto
-
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/obtener_registros', methods=['GET'])
 def obtener_registros():
-    # Paso 1: Ejecutar DOSBox
-    print("Ejecutando DOSBox...")
-    ejecutar_dosbox()
+    numRegistros, campoOrden = wrapper.main_p1()
+    return jsonify(numRegistros=numRegistros, campoOrden=campoOrden)
 
-    # Paso 2: Pulsar la tecla 4 (info BD)
-    print("Pulsando la tecla 4 para obtener información de la base de datos...")
-    pulsar_tecla('4')
+@app.route('/listar_datos_programa', methods=['POST'])
+def listar_datos_programa():
+    texto = request.form.get("sombratexto1")
+    resultado = wrapper.main_p2(texto)
+    return jsonify(resultado=resultado)
 
-    time.sleep(2)  # Espera un momento para que aparezca la información en pantalla
-
-    # Paso 3: Capturar la salida
-    print("Capturando salida...")
-    imagen = capturar_salida()
-
-    # Paso 4: Extraer texto de la imagen
-    texto = extraer_texto(imagen)
-
-    # Devuelve el texto extraído como respuesta JSON
-    return jsonify({"texto_extraido": texto})
-
+@app.route('/listar_cintas', methods=['POST'])
+def listar_cintas():
+    texto = request.form.get("campo3")
+    cintas = wrapper.main_p3(texto)
+    return jsonify(cintas=cintas)
 
 if __name__ == '__main__':
     app.run(debug=True)

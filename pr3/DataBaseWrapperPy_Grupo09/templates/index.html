@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página principal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .output {
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            color: #333;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            min-height: 2em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Página principal</h1>
+
+    <div class="section">
+       <button id="btnObtenerRegistros">Información de la BD</button>
+        <pre id="resultadoBD"></pre>
+    </div>
+
+    <div class="section">
+        <label for="sombratexto1">Sombratexto1</label>
+        <input type="text" id="sombratexto1" placeholder="Introduce texto">
+        <button onclick="listarDatosPrograma()">Listar datos del programa</button>
+        <div id="resultadoPrograma" class="output" style="min-height: 4em;"></div>
+    </div>
+
+    <div class="section">
+        <label for="campo3">Labeltexto3</label>
+        <input type="text" id="campo3" placeholder="campo3">
+        <button onclick="listarCintas()">Listar cintas</button>
+        <div id="resultadoCintas" class="output"></div>
+    </div>
+</div>
+
+<script>
+ document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("btnObtenerRegistros").addEventListener("click", obtenerRegistros);
+});
+
+function obtenerRegistros() {
+    console.log("Botón presionado, llamando a obtener_registros...");
+
+    fetch('/obtener_registros')
+        .then(response => {
+            console.log("Respuesta recibida del servidor:", response);
+            if (!response.ok) {
+                console.error("Error en la respuesta:", response.status);
+                throw new Error('Error en la red');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Datos recibidos:", data);
+            document.getElementById("resultadoBD").textContent = `Número de registros: ${data.numRegistros}\nOrdenación: ${data.campoOrden}`;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById("resultadoBD").textContent = "Error al obtener registros.";
+        });
+}
+
+function listarDatosPrograma() {
+    const texto = document.getElementById("sombratexto1").value;
+    fetch('/listar_datos_programa', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sombratexto1: texto })
+    })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("resultadoPrograma").textContent = data.resultado;
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function listarCintas() {
+    const texto = document.getElementById("campo3").value;
+    fetch('/listar_cintas', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ campo3: texto })
+    })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("resultadoCintas").textContent = data.cintas;
+        })
+        .catch(error => console.error('Error:', error));
+}
+</script>
