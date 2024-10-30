@@ -106,13 +106,17 @@ def corregir_campo_orden(campo_ocr, opciones):
     return campo_ocr
 
 def extraer_informacion_flexible_tarea2(texto_extraido, nombreProg):
-
-    error_busqueda_match = re.search(r'([N|M]O HAY [N|M]I[N|M]G.[N|M] PROGRA[N|M]A CO[N|M] ESE [N|M]O[N|M]BRE)', texto_extraido)
+    patternErr = r"PULSA [E|R][R|N|M]TER"  # Flexible ante errores OCR comunes en "ENTER"
+    error_busqueda_match = re.search(patternErr, texto_extraido)
     if error_busqueda_match:
         return "Error: no hay ningun programa con el nombre "
 
     # Buscar el número de registros con flexibilidad (de momento he puesto confusion entre N y M, y para I y L
+
     pattern = r'\b(\d+)\s+\S*\s+(UTILIDAD|ARCADE|CONVERSACIO[N|M]AL|VIDEOAVENTURA|SIMULADOR|JUEGO DE MESA|S\.\s?[DEPORTIVO|DEPORTI[L|I]VO]|ESTRATEGIA)\b.*CINT[A|E][E|:]\W?([A-Z]|\d+)'
+
+
+
     datos_programa_match = re.search(pattern, texto_extraido)
 
     if datos_programa_match:
@@ -199,21 +203,21 @@ def main_p2(nombreprog="MUGSY"):
 
         print("Datos filtrados:")
         info = extraer_informacion_flexible_tarea2(texto,nombreprog)
-        print(info)
+        if info == "Error desconocido o de OCR" or info == "Error: no hay ningun programa con el nombre ": # pulsar enter y salir
+            pulsar_tecla("enter")  # aceptar not found
+            pulsar_tecla("N") # no buscar más
+            pulsar_tecla("enter")
+
+        print(info+nombreprog)
 
     finally:
         # Paso 5: Matar el proceso de DOSBox
         print("Cerrando DOSBox...")
-        pulsar_tecla('8')
-        time.sleep(0.5)
-        pulsar_tecla('S')
-        time.sleep(0.5)
-        pulsar_tecla('enter')
-        time.sleep(0.5)
         dosbox_process.terminate()
 
 
 if __name__ == "__main__":
     #main_p1() # descomentar para ejecutar funcion 1
-    main_p2() # descomanetar para ejecutar funcion 2
+    #main_p2() # descomanetar para ejecutar funcion 2
     main_p2("PAINTBOX")
+    main_p2("NONEXISTENT")
