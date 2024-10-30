@@ -4,6 +4,8 @@ import sys
 import time
 import re
 import difflib
+from tkinter import Scale
+
 import pyautogui
 import pytesseract
 from PIL import ImageGrab
@@ -56,6 +58,23 @@ def extraer_texto(imagen):
     return texto
 
 
+def obtener_categoria_mas_parecida(categoria_ingresada):
+    # Lista de categorías posibles
+    categorias = [
+        "UTILIDAD", "ARCADE", "CONVERSACIONAL", "VIDEOAVENTURA",
+        "SIMULADOR", "JUEGO DE MESA", "S. DEPORTIVO", "ESTRATEGIA"
+    ]
+
+    # Obtener la categoría más parecida con un mínimo de similitud de 0.5
+    coincidencias = difflib.get_close_matches(categoria_ingresada, categorias, n=1, cutoff=0.5)
+
+    # Retornar la coincidencia más cercana o un mensaje en caso de que no haya coincidencias
+    if coincidencias:
+        return coincidencias[0]
+    else:
+        return "Categoría no encontrada"
+
+
 def extraer_informacion_flexible_tarea1(texto_extraido):
 
     # Buscar el número de registros con flexibilidad (de momento he puesto confusion entre N y M, y para I y L
@@ -88,12 +107,15 @@ def corregir_campo_orden(campo_ocr, opciones):
 
 def extraer_informacion_flexible_tarea2(texto_extraido, nombreProg):
 
-    # Buscar el número de registros con flexibilidad (de momento he puesto confusion entre N y M, y para I y L
-    datos_programa_match = re.search(fr'(\d+)\s+-\s+{nombreProg}\s+-\s+(\w+)\s+CINTA:(\d+)', texto_extraido)
     error_busqueda_match = re.search(r'([N|M]O HAY [N|M]I[N|M]G.[N|M] PROGRA[N|M]A CO[N|M] ESE [N|M]O[N|M]BRE)', texto_extraido)
     if error_busqueda_match:
         return "Error: no hay ningun programa con el nombre "
-    elif datos_programa_match:
+
+    # Buscar el número de registros con flexibilidad (de momento he puesto confusion entre N y M, y para I y L
+    pattern = r'\b(\d+)\s+\S*\s+(UTILIDAD|ARCADE|CONVERSACIO[N|M]AL|VIDEOAVENTURA|SIMULADOR|JUEGO DE MESA|S\.\s?[DEPORTIVO|DEPORTI[L|I]VO]|ESTRATEGIA)\b.*CINT[A|E][E|:]\W?([A-Z]|\d+)'
+    datos_programa_match = re.search(pattern, texto_extraido)
+
+    if datos_programa_match:
         pulsar_tecla('S') #Confirmar registro correcto
         pulsar_tecla('enter')
         time.sleep(0.5)
@@ -102,8 +124,9 @@ def extraer_informacion_flexible_tarea2(texto_extraido, nombreProg):
         time.sleep(0.5)
         pulsar_tecla('N') # Confirmar no quieor buscar mas
         pulsar_tecla('enter')
-        numero_registro = datos_programa_match.group(1)
-        categoria = datos_programa_match.group(2)
+        # Extraer los datos si se encuentra coincidencia
+        numero_registro = datos_programa_match.group(1)  # Puede ser None si no hay un número
+        categoria = obtener_categoria_mas_parecida(datos_programa_match.group(2))
         numero_cinta = datos_programa_match.group(3)
         print("Número de registro:", numero_registro)
         print("Categoría:", categoria)
@@ -167,17 +190,16 @@ def main_p2(nombreprog="MUGSY"):
         time.sleep(3)
 
         # Capturar la salida
-        print("Capturando salida...")
+        print("Capturando resultado busqueda programa y extrayendo texto con OCR...")
         imagen = capturar_salida()
-
         # Extraer texto de la imagen
-        print("Extrayendo texto...")
         texto = extraer_texto(imagen)
         print("Texto extraído:")
         print(texto)
 
         print("Datos filtrados:")
         info = extraer_informacion_flexible_tarea2(texto,nombreprog)
+        print(info)
 
     finally:
         # Paso 5: Matar el proceso de DOSBox
@@ -194,3 +216,4 @@ def main_p2(nombreprog="MUGSY"):
 if __name__ == "__main__":
     #main_p1() # descomentar para ejecutar funcion 1
     main_p2() # descomanetar para ejecutar funcion 2
+    main_p2("PAINTBOX")
