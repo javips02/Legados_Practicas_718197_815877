@@ -82,7 +82,7 @@
     </div>
 
     <div class="section">
-        <label for="campo3">Labeltexto3</label>
+        <label for="campo3">Nombre de la cinta</label>
         <input type="text" id="campo3" placeholder="campo3">
         <button onclick="listarCintas()">Listar cintas</button>
         <div id="resultadoCintas" class="output"></div>
@@ -132,19 +132,34 @@ function listarDatosPrograma() {
         .catch(error => console.error('Error:', error));
 }
 
-function listarCintas() {
-    const texto = document.getElementById("campo3").value;
-    fetch('/listar_cintas', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ campo3: texto })
-    })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("resultadoCintas").textContent = data.cintas;
-        })
-        .catch(error => console.error('Error:', error));
-}
+ function listarCintas() {
+     const texto = document.getElementById("campo3").value;
+     fetch('/listar_cintas', {
+         method: 'POST',
+         headers: {
+             'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({ campo3: texto })
+     })
+         .then(response => response.json())
+         .then(data => {
+             console.log("Datos recibidos de listar_cintas:", data);
+
+             // Crear HTML para cada cinta
+             const cintasHTML = data.cintas.map(cinta => `
+            <div class="cinta">
+                <strong>Nombre:</strong> ${cinta.nombre}<br>
+                <strong>Tipo:</strong> ${cinta.tipo}<br>
+                <strong>Registro:</strong> ${cinta.registro}
+            </div>
+        `).join("");
+
+             // Mostrar el resultado en el elemento `resultadoCintas`
+             document.getElementById("resultadoCintas").innerHTML = cintasHTML;
+         })
+         .catch(error => console.error('Error:', error));
+ }
+
+
+
 </script>

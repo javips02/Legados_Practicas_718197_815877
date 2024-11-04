@@ -5,7 +5,7 @@ import time
 import re
 import difflib
 from tkinter import Scale
-
+from programa import Programa
 import pyautogui
 import pytesseract
 from PIL import ImageGrab
@@ -214,11 +214,110 @@ def main_p2(nombreprog="MUGSY"):
         # Paso 5: Matar el proceso de DOSBox
         print("Cerrando DOSBox...")
         dosbox_process.terminate()
+def main_p3(cinta="A"):
+    # Paso 1: Ejecutar DOSBox
+    print("Extrayendo texto con OCR... de la cinta " + cinta)
+    print("Ejecutando DOSBox...")
+    dosbox_process = ejecutar_dosbox()
+    programas = []
+    try:
+        cambiarConfiguracionOrdenacion()
+        time.sleep(1)
+        pulsar_tecla('6')
+        time.sleep(1)
+        for letra in cinta:
+            pulsar_tecla(letra)
+        pulsar_tecla('enter')
+        time.sleep(3)
+        # Llamamos a extraer_informacion_flexible_tarea3, que ahora maneja el bucle `while`
+        programas = extraer_informacion_flexible_tarea3(cinta)
 
+        # Imprimimos los programas encontrados
+        printProgramas(programas)
+
+        pulsar_tecla('enter')
+        time.sleep(2)
+        return programas
+    finally:
+        # Paso 5: Matar el proceso de DOSBox
+        print("Cerrando DOSBox...")
+        pulsar_tecla('8')
+        dosbox_process.terminate()
+
+
+def printProgramas(programas):
+    print("Programas encontrados en el bucle:------")
+    for programa in programas:
+        print(programa)
+
+
+#Lee todas las cintas que se llamen cinta y devuelve la lista de programas
+# Devuelve una lista de programas encontrados
+def extraer_informacion_flexible_tarea3(cintas):
+    programas = []
+    final = True
+    letraMatchAuxiliar = None
+    while final:
+        # Captura de pantalla de DOSBox
+        capturar_salida("captura.png")
+
+        # Extraer texto de la imagen
+        texto_extraido = extraer_texto("captura.png")
+        pattern = ('(\w{3})\s+(\S+\s?\S*)\s+([U|O]TILIDAD|ARCADE|CONVERSACIO[N|M]AL|VIDEOAVENTURA|SIM[U|I]LADOR|JUEGO DE [N|M]ESA|S\.\s?[DEPORTIVO|DEPORTI[L|I]VO]|ESTRATEGIA)'
+                   '\s+([A-Z]|\d+)\s+(.*)')
+
+        for line in texto_extraido.strip().split('\n'):
+            datos_programa_match = re.search(pattern, line)
+            print(line)
+            if datos_programa_match:
+                if letraMatchAuxiliar is None:
+                    letraMatchAuxiliar = datos_programa_match.group(4) # Guarda la primera letra encontrada
+
+                if not (datos_programa_match.group(4).startswith(cintas)
+                        or datos_programa_match.group(4).startswith(letraMatchAuxiliar)):
+                    # Termina el bucle si encuentra una cinta diferente
+                    final = False
+                    break
+
+                # Procesa el programa si cumple las condiciones
+                print("Datos del programa:")
+                print("Número de registro:", datos_programa_match.group(1))
+                print("Nombre del programa:", datos_programa_match.group(2))
+                print("Categoría:", obtener_categoria_mas_parecida(datos_programa_match.group(3)))
+                print("Número de cinta:", datos_programa_match.group(4))
+                print("Información adicional:", datos_programa_match.group(5))
+                print("-----------------------------")
+
+                # Crear instancia de Programa y añadirla a la lista
+                programa = Programa(datos_programa_match.group(2),
+                                    obtener_categoria_mas_parecida(datos_programa_match.group(3)),
+                                    datos_programa_match.group(5))
+                programas.append(programa)
+
+        # Pulsar tecla 'space' para avanzar si `final` aún es True
+        if final:
+            pulsar_tecla('space')
+        time.sleep(3)
+
+    return programas
+
+def cambiarConfiguracionOrdenacion():
+    print("Pulsando la tecla 3 para cambiar la configuracion de ordenacion de la base de datos...")
+    pulsar_tecla('3')
+    pulsar_tecla('enter')
+    time.sleep(1)
+    pulsar_tecla('3')
+    pulsar_tecla('enter')
+    print("Para que lo ordene por cintas")
+    time.sleep(25)
+    pulsar_tecla('enter')
+    print("Configurado ordenacion por cinta")
 
 if __name__ == "__main__":
     #main_p1() # descomentar para ejecutar funcion 1
     #main_p2() # descomanetar para ejecutar funcion 2
     #main_p2("PAINTBOX")
     #main_p2("NONEXISTENT")
-    print("hola")
+    main_p3("B")
+  
+
