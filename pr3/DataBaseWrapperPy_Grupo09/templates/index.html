@@ -75,10 +75,10 @@
     </div>
 
     <div class="section">
-        <label for="sombratexto1">Sombratexto1</label>
-        <input type="text" id="sombratexto1" placeholder="Introduce texto">
+        <label for="Seccion1">Búsqueda de un programa en la BD</label>
+        <input type="text" id="nombreProgramaInput" placeholder="Introduce el nombre del programa a buscar">
         <button onclick="listarDatosPrograma()">Listar datos del programa</button>
-        <div id="resultadoPrograma" class="output" style="min-height: 4em;"></div>
+        <pre id="resultadoPrograma" class="output" style="min-height: 4em;"></pre>
     </div>
 
     <div class="section">
@@ -117,20 +117,40 @@ function obtenerRegistros() {
 }
 
 function listarDatosPrograma() {
-    const texto = document.getElementById("sombratexto1").value;
+    // Obtén el valor del input con el nuevo ID
+    const texto = document.getElementById("nombreProgramaInput").value;
+
+    // Agregar un console.log para verificar el valor del input
+    console.log("Buscando programa con el nombre:", texto);
+
+    // Realiza la solicitud al endpoint
     fetch('/listar_datos_programa', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ sombratexto1: texto })
+        body: JSON.stringify({ nombreProgJS: texto }) // Envía el valor en el cuerpo
     })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("resultadoPrograma").textContent = data.resultado;
-        })
-        .catch(error => console.error('Error:', error));
+    .then(response => {
+        // Log de la respuesta para depurar
+        console.log("Respuesta recibida del servidor:", response);
+        if (!response.ok) {
+            console.error("Error en la respuesta:", response.status);
+            throw new Error('Error en la red');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Muestra el resultado en el elemento correspondiente
+        console.log("Datos recibidos:", data);
+        document.getElementById("resultadoPrograma").textContent = data.resultado;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById("resultadoPrograma").textContent = "Error al listar datos del programa.";
+    });
 }
+
 
  function listarCintas() {
      const texto = document.getElementById("campo3").value;
