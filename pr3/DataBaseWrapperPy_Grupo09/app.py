@@ -48,7 +48,10 @@ def listar_datos_programa():
     info, numReg, cat, numCinta = wrapper.main_p2(texto)  # Supongamos que esto retorna info, numReg, cat, numCinta
 
     # Crea una respuesta combinada
-    resultado = f"Información: {info}\nNúmero de registro: {numReg}\nCategoría: {cat}\nNúmero de cinta: {numCinta}"
+    if numReg!=0:
+        resultado = f"Información: {info}\nNúmero de registro: {numReg}\nCategoría: {cat}\nNúmero de cinta: {numCinta}"
+    else:
+        resultado =  f"Información: {info}{texto}\n"
     return jsonify(resultado=resultado)
 
 
