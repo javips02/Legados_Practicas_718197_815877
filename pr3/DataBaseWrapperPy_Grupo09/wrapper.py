@@ -31,7 +31,7 @@ def ejecutar_dosbox():
 
     # Ejecuta DOSBox con el archivo .bat y guarda el proceso
     process = subprocess.Popen([dosbox_path, db_file_path, '-fullscreen', '-noconsole'])
-    time.sleep(8)  # Espera que DOSBox se inicialice completamente
+    time.sleep(5)  # Espera que DOSBox se inicialice completamente
     return process  # Devuelve el proceso para poder terminarlo más tarde
 
 def pulsar_tecla(tecla):
@@ -110,7 +110,7 @@ def extraer_informacion_flexible_tarea2(texto_extraido, nombreProg):
     patternErr = r"PULSA [E|R][R|N|M]TER"  # Flexible ante errores OCR comunes en "ENTER"
     error_busqueda_match = re.search(patternErr, texto_extraido)
     if error_busqueda_match:
-        return "Error: no hay ningun programa con el nombre "
+        return "Error: no hay ningun programa con el nombre ", 0, 0, 0
 
     # Buscar el número de registros con flexibilidad (de momento he puesto confusion entre N y M, y para I y L
 
@@ -134,9 +134,9 @@ def extraer_informacion_flexible_tarea2(texto_extraido, nombreProg):
         print("Número de registro:", numero_registro)
         print("Categoría:", categoria)
         print("Número de cinta:", numero_cinta)
-        return  "Número de registro:"+numero_registro+"Categoría:"+categoria+"Número de cinta:"+numero_cinta
+        return  "Número de registro:"+numero_registro+"Categoría:"+categoria+"Número de cinta:"+numero_cinta, numero_registro, categoria, numero_cinta
     else:
-        return "Error desconocido o de OCR"
+        return "Error desconocido o de OCR", 0, 0, 0
 
 def main_p1():
     # Paso 1: Ejecutar DOSBox
@@ -162,6 +162,7 @@ def main_p1():
 
         print("Datos filtrados:")
         numRegistros, campoOrden =extraer_informacion_flexible_tarea1(texto)
+        return numRegistros, campoOrden
 
     finally:
         # Paso 5: Matar el proceso de DOSBox
@@ -173,7 +174,7 @@ def main_p1():
         pulsar_tecla('enter')
         time.sleep(0.5)
         dosbox_process.terminate()
-        return numRegistros, campoOrden
+
 
 def main_p2(nombreprog="MUGSY"):
     # Paso 1: Ejecutar DOSBox
@@ -202,13 +203,14 @@ def main_p2(nombreprog="MUGSY"):
         print(texto)
 
         print("Datos filtrados:")
-        info = extraer_informacion_flexible_tarea2(texto,nombreprog)
+        info, numreg, cat, numcinta = extraer_informacion_flexible_tarea2(texto,nombreprog)
         if info == "Error desconocido o de OCR" or info == "Error: no hay ningun programa con el nombre ": # pulsar enter y salir
             pulsar_tecla("enter")  # aceptar not found
             pulsar_tecla("N") # no buscar más
             pulsar_tecla("enter")
 
         print(info+nombreprog)
+        return info, numreg, cat, numcinta
 
     finally:
         # Paso 5: Matar el proceso de DOSBox
@@ -216,9 +218,10 @@ def main_p2(nombreprog="MUGSY"):
         dosbox_process.terminate()
 
 
+
 if __name__ == "__main__":
     #main_p1() # descomentar para ejecutar funcion 1
     #main_p2() # descomanetar para ejecutar funcion 2
-    #main_p2("PAINTBOX")
+    main_p2("PAINTBOX")
     #main_p2("NONEXISTENT")
-    print("hola")
+    #print("hola")
