@@ -4,7 +4,6 @@ import sys
 import time
 import re
 import difflib
-from tkinter import Scale
 from programa import Programa
 import pyautogui
 import pytesseract
@@ -25,9 +24,9 @@ def resource_path(relative_path):
 
 def ejecutar_dosbox():
     # Ruta completa a DOSBox
-    dosbox_path = r".\Database-MSDOS\DOSBox-0.74\DOSBox.exe"
+    dosbox_path = r"Database-MSDOS\DOSBox-0.74\DOSBox.exe"
     # Ruta completa al archivo .bat
-    db_file_path = r".\Database-MSDOS\Database\gwbasic.bat"
+    db_file_path = r"Database-MSDOS\Database\gwbasic.bat"
 
     # Ejecuta DOSBox con el archivo .bat y guarda el proceso
     process = subprocess.Popen([dosbox_path, db_file_path, '-fullscreen', '-noconsole'])
