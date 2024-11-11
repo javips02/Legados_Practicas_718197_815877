@@ -40,11 +40,11 @@ call "%VENV_PATH%\Scripts\activate.bat"
 
 :: Instalar las dependencias de tu aplicación 
 echo Instalando dependencias ...
-%PIP% install -r "dependencias.txt"  > nul 2>&1
+%PIP% install -r "requirements.txt"  > nul 2>&1
 
 :: Ejecutar la aplicación Flask y esperar a que termine 
 cd app
 echo Lanzando aplicación ...
-python main.py
+python app.py
 pause
 endlocal
